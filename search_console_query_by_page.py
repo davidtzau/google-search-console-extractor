@@ -1,25 +1,21 @@
 ###########################################################################################################################
-#Learn more about the Google Search Cosnole API: https://developers.google.com/webmaster-tools/search-console-api-original/
+#Learn more about the Google Search Cosnole API: https://developers.google.com/webmaster-tools
 #Author: David Tzau
 ###########################################################################################################################
 import sys
 import time
-from oauth2client.service_account import ServiceAccountCredentials
-from apiclient.discovery import build
 import httplib2
+from google.oauth2 import service_account
+from apiclient.discovery import build
 
 #set authorization scope to read only
 OAUTH_SCOPES = ['https://www.googleapis.com/auth/webmasters.readonly']
 
 #load your Service Account credeitnails
-credentials = ServiceAccountCredentials.from_json_keyfile_name('YOUR_SERVICE_ACCOUNT_CREDENTIALS_FILE.json', OAUTH_SCOPES)
-
-#create Http object and authorize it to access with our credentials to access Search Console data
-http = httplib2.Http()
-authorized_http = credentials.authorize(http)
+credentials = service_account.Credentials.from_service_account_file("YOUR_SERVICE_ACCOUNT_CREDENTIALS_FILE.json", scopes=OAUTH_SCOPES)
 
 #create search console service instance
-search_console_service = build('webmasters', 'v3', http=authorized_http)
+search_console_service = build('webmasters', 'v3', credentials=credentials)
 
 #open output file to write infromation returned from Google Search Console API.
 with open('output.csv', 'w') as outputfile:
@@ -38,8 +34,8 @@ with open('output.csv', 'w') as outputfile:
     
     #Build api request. Get top 10 queries for the date range, sorted by click count descending with page filter applied
     request = {
-        'startDate': '2017-03-01',
-        'endDate': '2017-03-20',
+        'startDate': '2023-01-01',
+        'endDate': '2023-01-31',
         'dimensions': ['query'],
         'dimensionFilterGroups': [{
           'filters': [{
